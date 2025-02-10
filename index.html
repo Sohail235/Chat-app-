@@ -3,39 +3,98 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat App</title>
+    <title>Sohail Khan AI</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            background-color: black;
+            color: #0f0;
+            font-family: 'Courier New', monospace;
             text-align: center;
         }
-        #chat-box {
+        .container {
             width: 80%;
-            height: 300px;
-            border: 1px solid gray;
-            overflow-y: scroll;
-            margin: 20px auto;
-            padding: 10px;
+            margin: auto;
+            padding: 20px;
+            border: 2px solid #0f0;
+            box-shadow: 0px 0px 10px #0f0;
+            background: rgba(0, 0, 0, 0.8);
         }
-        input {
-            width: 70%;
+        .chat-box {
+            height: 300px;
+            overflow-y: auto;
+            border: 2px solid #0f0;
             padding: 10px;
             margin-top: 10px;
+            box-shadow: 0px 0px 10px #0f0;
+            background: rgba(0, 0, 0, 0.8);
+        }
+        .message {
+            background: black;
+            padding: 5px;
+            border-left: 3px solid #0f0;
+            margin: 5px 0;
+            box-shadow: 0px 0px 5px #0f0;
+        }
+        input, button {
+            padding: 10px;
+            border: none;
+            outline: none;
+            margin: 5px;
+            font-family: 'Courier New', monospace;
+        }
+        input {
+            background: black;
+            color: #0f0;
+            border: 2px solid #0f0;
+            box-shadow: 0px 0px 5px #0f0;
+            width: 70%;
         }
         button {
-            padding: 10px;
+            background: red;
+            color: white;
+            font-weight: bold;
             cursor: pointer;
+            box-shadow: 0px 0px 10px red;
         }
     </style>
 </head>
 <body>
+    <h1>💀 Sohail Khan AI 💀</h1>
+    <div class="container">
+        <h2>Ask Anything</h2>
+        <div class="chat-box" id="chatBox"></div>
+        <input type="text" id="userInput" placeholder="Type your question...">
+        <button onclick="askAI()">Send</button>
+    </div>
 
-    <h1>Chat App</h1>
-    <div id="chat-box"></div>
-    <input type="text" id="message" placeholder="Type your message">
-    <button onclick="sendMessage()">Send</button>
+    <script>
+        async function askAI() {
+            let userInput = document.getElementById("userInput").value;
+            if (userInput.trim() === "") return;
 
-    <script type="module" src="app.js"></script>
+            let chatBox = document.getElementById("chatBox");
+            let userMessage = `<div class='message'><b>You:</b> ${userInput}</div>`;
+            chatBox.innerHTML += userMessage;
+            document.getElementById("userInput").value = "";
 
+            const response = await fetch("https://api.openai.com/v1/chat/completions", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "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"
+                },
+                body: JSON.stringify({
+                    model: "gpt-4",
+                    messages: [{"role": "system", "content": "You are a helpful AI assistant."}, {"role": "user", "content": userInput}],
+                    max_tokens: 500
+                })
+            });
+
+            const data = await response.json();
+            let aiMessage = `<div class='message'><b>AI:</b> ${data.choices[0].message.content.trim()}</div>`;
+            chatBox.innerHTML += aiMessage;
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+    </script>
 </body>
 </html>
